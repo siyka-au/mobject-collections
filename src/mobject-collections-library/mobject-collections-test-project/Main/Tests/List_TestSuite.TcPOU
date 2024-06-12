@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.6">
   <POU Name="List_TestSuite" Id="{687abae4-6464-4e6f-b6bc-2179a67dd6ef}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK List_TestSuite EXTENDS TcUnit.FB_TestSuite
 VAR
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[CheckAddItem();
 CheckCapacityAfterAdding1Item();
@@ -47,6 +46,8 @@ VAR
 	in3 : INT := 789;
 	out : INT;
 	expected : INT := 789;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -57,12 +58,11 @@ list.AddItem(in1); // [123]
 list.AddItem(in2); // [123,456]
 list.AddItem(in3); // [123,456,789]
 
-list.TryGetByIndex(2,out);
+list.TryGetByIndex(2, out);
 
 AssertEquals(expected, out, 'Did not produce the expected result');
 
-TEST_FINISHED();
-]]></ST>
+TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
     <Method Name="CheckCapacityAfterAdding1Item" Id="{aa99a794-ae02-41ba-b43e-3e6d27c79da8}">
@@ -71,6 +71,8 @@ VAR
 	in1 : INT := 1;
 	expected : DINT := 4;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -97,6 +99,8 @@ VAR
 	in6 : INT := 6;
 	expected : DINT := 8;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -127,6 +131,8 @@ VAR
 	in6 : INT := 6;
 	expected : DINT := 10;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -153,6 +159,8 @@ TEST_FINISHED();]]></ST>
 VAR
 	expected : DINT := 0;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -174,6 +182,8 @@ VAR
 	in3 : INT := 789;
 	expected : INT := 789;
 	out : INT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -186,7 +196,7 @@ list.AddItem(in2); // [123,456]
 list.Clear(); // []
 list.AddItem(in3); // [789]
 
-list.TryGetByIndex(0,out);
+list.TryGetByIndex(0, out);
 
 AssertEquals(expected, out, 'Did not produce the expected result');
 
@@ -200,6 +210,8 @@ VAR
 	in2 : INT := 456;
 	in3 : INT := 789;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -225,6 +237,8 @@ VAR
 	in3 : INT := 789;
 	expected : DINT := 3;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -251,6 +265,8 @@ VAR
 	out : INT;
 	result : BOOL;
 	expected : INT := 456;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -275,6 +291,8 @@ TEST_FINISHED();]]></ST>
 VAR
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -296,6 +314,8 @@ VAR
 	in3 : INT := 789;
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -319,9 +339,11 @@ VAR
 	in1 : INT := 123;
 	in2 : INT := 456;
 	in3 : INT := 789;
-	list : List;
 	enumerator : I_ForwardEnumerator;
 	result : BOOL;
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -351,6 +373,8 @@ VAR
 	in3 : INT := 789;
 	expected : DINT := 1;
 	result : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -376,6 +400,8 @@ VAR
 	in3 : INT := 789;
 	expected : DINT := -1;
 	result : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -395,9 +421,11 @@ TEST_FINISHED();]]></ST>
     <Method Name="CheckImplementsICollection" Id="{a6d761ea-1ba3-4a5f-b0c7-b9c1be384a89}">
       <Declaration><![CDATA[METHOD PRIVATE CheckImplementsICollection
 VAR
-	list : List;
     collection : I_Collection := list;
     result : BOOL;
+END_VAR
+VAR_INST
+	list : List;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TEST('ListTests_CheckImplementsICollection');
@@ -412,9 +440,11 @@ TEST_FINISHED();]]></ST>
     <Method Name="CheckImplementsIEnumerable" Id="{98bbbfc1-5769-4588-900c-d6e1a71cefb3}">
       <Declaration><![CDATA[METHOD PRIVATE CheckImplementsIEnumerable
 VAR
-	list : List;
 	enumerable : I_Enumerable := list;
 	result : BOOL;
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -430,9 +460,11 @@ TEST_FINISHED();]]></ST>
     <Method Name="CheckImplementsIList" Id="{ab3222f8-29e7-4132-b4e8-8f60d299cce9}">
       <Declaration><![CDATA[METHOD PRIVATE CheckImplementsIList
 VAR
-	list : List;
     iList : I_List := list;
     result : BOOL;
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -450,6 +482,8 @@ TEST_FINISHED();]]></ST>
       <Declaration><![CDATA[METHOD PUBLIC CheckIsEmptyWhenEmpty
 VAR
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -473,6 +507,8 @@ TEST_FINISHED();]]></ST>
 VAR
 	in : INT := 123;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -498,8 +534,10 @@ TEST_FINISHED();]]></ST>
       <Declaration><![CDATA[METHOD PUBLIC CheckOffEvent
 VAR
 	value : INT := 123;
-	list : List;
 	handler : CollectionChangedEventHandler(ExpectedOriginator := list);
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -525,8 +563,10 @@ TEST_FINISHED();]]></ST>
       <Declaration><![CDATA[METHOD PUBLIC CheckOnceEvent
 VAR
 	value : INT := 123;
-	list : List;
 	handler : CollectionChangedEventHandler(ExpectedOriginator := list);
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -553,8 +593,10 @@ TEST_FINISHED();]]></ST>
       <Declaration><![CDATA[METHOD PUBLIC CheckOnChangedEvent
 VAR
 	value : INT := 123;
-	list : List;
 	handler : CollectionChangedEventHandler(ExpectedOriginator := list);
+END_VAR
+VAR_INST
+	list : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -623,6 +665,8 @@ VAR
 	in6 : INT := 6;
 	expected : DINT := 5;
 	out : DINT;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -651,6 +695,8 @@ VAR
 	in3 : INT := 789;
 	out : ARRAY [0..2] OF INT;
 	expected : ARRAY [0..2] OF INT := [123,456,789];
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -680,6 +726,8 @@ VAR
 	in3 : INT := 789;
 	out : ARRAY [0..2] OF INT;
 	expected : ARRAY [0..2] OF INT := [123,456,789];
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -710,6 +758,8 @@ VAR
 	out : INT;
 	result : BOOL;
 	expected : INT := 789;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -735,6 +785,8 @@ VAR
 	in3 : INT := 789;
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -760,6 +812,8 @@ TEST_FINISHED();]]></ST>
 VAR
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -781,6 +835,8 @@ VAR
 	in3 : INT := 789;
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -807,6 +863,8 @@ VAR
 	out : INT;
 	result : BOOL;
 	expected : INT := 456;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -835,6 +893,8 @@ VAR
 	in3 : INT := 789;
 	out : INT;
 	result : BOOL;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -860,6 +920,8 @@ VAR
 	out : INT;
 	result : BOOL;
 	expected : INT := 789;
+END_VAR
+VAR_INST
 	list : List;
 END_VAR
 ]]></Declaration>
@@ -879,5 +941,143 @@ AssertEquals(expected, out, 'Array didnt shift up items');
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
+    <LineIds Name="List_TestSuite">
+      <LineId Id="34" Count="0" />
+      <LineId Id="66" Count="29" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckAddItem">
+      <LineId Id="3" Count="8" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckCapacityAfterAdding1Item">
+      <LineId Id="3" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckCapacityAfterAdding5Items">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckCapacityAfterAdding5ItemsTrimThen1Item">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckCapacityAtStart">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckClear">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckContains">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckCount">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetByIndexInBounds">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetByIndexNoItems">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetByIndexOutOfBounds">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetEnumerator">
+      <LineId Id="3" Count="14" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetIndexOfExistingItem">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckGetIndexOfNonExistingItem">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckImplementsICollection">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckImplementsIEnumerable">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckImplementsIList">
+      <LineId Id="3" Count="6" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckIsEmptyWhenEmpty">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckIsEmptyWhenFull">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckOffEvent">
+      <LineId Id="3" Count="14" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckOnceEvent">
+      <LineId Id="3" Count="15" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckOnChangedEvent">
+      <LineId Id="3" Count="18" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckOnDisposedEvent">
+      <LineId Id="3" Count="20" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTrimExcessAfterAdding5Items">
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryCopyTo">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryCopyToLocation">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryInsert">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveAtInBounds">
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveAtNoItems">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveAtOutOfBounds">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveItemFirstShiftUp">
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveItemNonExisting">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List_TestSuite.CheckTryRemoveItemSecondShiftUp">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

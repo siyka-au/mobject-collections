@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="MAIN" Id="{4fc6a7e2-9479-48b5-85ef-622583cb9cd0}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM MAIN
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.6">
+  <POU Name="Main" Id="{4fc6a7e2-9479-48b5-85ef-622583cb9cd0}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM Main
 VAR
 	dictionary_TestSuite : Dictionary_TestSuite;
 	dictionaryForwardEnumerator_TestSuite : DictionaryForwardEnumerator_TestSuite;
@@ -17,119 +17,14 @@ VAR
 	queueForwardEnumerator_TestSuite : QueueForwardEnumerator_TestSuite;
     stack_TestSuite : Stack_TestSuite;
 	stackForwardEnumerator_TestSuite : StackForwardEnumerator_TestSuite;
-
-    // variables used in examples
-    linkedList : LinkedList;
-    queue : Queue;
-    stack : Stack;
-	dictionary : Dictionary;
-    value1 : INT := 123;
-    value2 : INT := 456;
-    value3 : INT := 789;
-    enumerator : I_ForwardEnumerator;
-    output : INT;
-    allowed : BOOL;
-	result : BOOL;
-	
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[TcUnit.RUN();
-
-// LinkedList Examples
-// ===================
-
-// using AddFirst, First and RemoveFirst
-// -------------------------------------
-
-linkedList.AddFirst(value1); // (first->) 123 (<-last)
-linkedList.AddFirst(value2); // (first->) 456, 123 (<-last)
-linkedList.AddFirst(value3); // (first->) 789, 456, 123  (<-last)
-
-enumerator := linkedList.GetEnumerator();
-// the enumerator follows the .net style, which means you must call MoveNext once to
-// move to the first item.  This allows you to directly use the enumerator in a while
-// loop.
-WHILE enumerator.MoveNext() DO
-	enumerator.TryGet(output); // 1st pass output = 789, 2nd pass output = 456, 3rd pass output = 123
-END_WHILE;
-// you must dispose enumerators as they are new objects.
-enumerator.Dispose();
-
-allowed := linkedList.First.TryGet(output); // allowed = true, output = 789
-linkedList.RemoveFirst(); // (first->) 456, 123  (<-last)
-allowed := linkedList.First.TryGet(output); // allowed = true, output = 456
-linkedList.RemoveFirst(); // (first->) 123  (<-last)
-allowed := linkedList.First.TryGet(output); // allowed = true, output = 123
-linkedList.RemoveFirst(); // (first->) null (<-last)
-
-// Queue Examples
-// ==============
-
-// using Enqueue, TryPeek and TryDequeue
-// -------------------------------------
-
-queue.Enqueue(value1); // (first->) 123
-queue.Enqueue(value2); // (first->) 123, 456
-queue.Enqueue(value3); // (first->) 123, 456, 789
-
-// TryPeek will not remove the item from the queue
-allowed := queue.TryPeek(output); // allowed = true, output = 123
-
-// TryDequeue will remove the item from the queue
-allowed := queue.TryDequeue(output); // allowed = true, output = 123
-allowed := queue.TryDequeue(output); // allowed = true, output = 456
-allowed := queue.TryDequeue(output); // allowed = true, output = 789
-
-// Stack Examples
-// ==============
-
-// using Push, TryPeek and TryPop
-// -------------------------------------
-
-stack.Push(value1); // (fifo->) 123
-stack.Push(value2); // (fifo->) 456, 123
-stack.Push(value3); // (fifo->) 789, 456, 123
-
-// TryPeek will not remove the item from the stack
-allowed := stack.TryPeek(output); // allowed = true, output = 789
-
-// TryDequeue will remove the item from the queue
-allowed := stack.TryPop(output); // allowed = true, output = 789
-allowed := stack.TryPop(output); // allowed = true, output = 456
-allowed := stack.TryPop(output); // allowed = true, output = 123
-
-// Dictionary Examples
-// ===================
-
-// typical use of adding key value pairs
-allowed := dictionary.TryAdd('a', value1); // allowed = true, [['a',123]]
-allowed := dictionary.TryAdd('b', value2); // allowed = true, [['a',123],['b',456]]
-
-// TryAdd will return false if the key already exists and the operation cancelled
-allowed := dictionary.TryAdd('b', value3); // allowed = false, [['a',123],['b',456]]
-
-// read key values using TryGetValue
-allowed := dictionary.TryGetValue('a', output); // allowed = true, output = 123
-allowed := dictionary.TryGetValue('b', output); // allowed = true, output = 456
-
-// if a key does not exist, or the destination is the wrong size then the return shall be FALSE
-allowed := dictionary.TryGetValue('c', output); // allowed = false, output = 456
-
-// update existing key value pairs using addOrUpdate(Key,Value)
-dictionary.AddOrUpdate('c', value2); // [['a',123],['b',456],['c',456]]
-allowed := dictionary.TryGetValue('c', output); // allowed = true, output = 456
-dictionary.AddOrUpdate('c', value3); // [['a',123],['b',456],['c',789]]
-allowed := dictionary.TryGetValue('c', output); // allowed = true, output = 789
-
-// remove key value pairs using Remove(Key)
-dictionary.Remove('a'); // [['b',456],['c',789]]
-
-// check for keys using ContainsKey
-result := dictionary.ContainsKey('a'); // result = FALSE
-result := dictionary.ContainsKey('b'); // result = TRUE
-
-// clear the dictionary using Clear()
-dictionary.Clear();]]></ST>
+      <ST><![CDATA[TcUnit.Run();
+]]></ST>
     </Implementation>
+    <LineIds Name="Main">
+      <LineId Id="3" Count="0" />
+      <LineId Id="99" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

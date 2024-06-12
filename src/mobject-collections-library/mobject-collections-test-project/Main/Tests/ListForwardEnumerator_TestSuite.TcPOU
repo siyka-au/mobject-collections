@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.6">
   <POU Name="ListForwardEnumerator_TestSuite" Id="{71bc6d90-25f6-4e5f-ab81-b2ed2832edc4}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK ListForwardEnumerator_TestSuite EXTENDS TcUnit.FB_TestSuite
 VAR
@@ -22,8 +22,10 @@ CheckWorksWithStrings();]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE CheckIsValidAtStart
 VAR
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -47,8 +49,10 @@ TEST_FINISHED();]]></ST>
 VAR
 	in1 : INT := 123;
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -71,9 +75,11 @@ TEST_FINISHED();]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE CheckMoveNextReturnsFalseWhenEmpty
 VAR
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
 	count : DINT;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -98,8 +104,10 @@ VAR
 	in2 : INT := 456;
 	in3 : INT := 789;
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -123,8 +131,10 @@ TEST_FINISHED();]]></ST>
 VAR
 	in1 : INT := 123;
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -150,8 +160,10 @@ VAR
 	in3 : ARRAY [0..1] OF REAL := [2.3,4.5];
 	out : ARRAY [0..1] OF REAL;
 	expected : ARRAY [0..1] OF REAL := [0.1,2.3];
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -187,8 +199,10 @@ VAR
 	out : INT;
 	expected : INT := 123;
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -222,8 +236,10 @@ VAR
 	out : INT;
 	expected : INT := 123;
 	result : BOOL;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -262,8 +278,10 @@ VAR
 	expected1 : ARRAY [0..1] OF REAL := [0.1,2.3];
 	expected2 : ARRAY [0..1] OF REAL := [1.2,3.4];
 	expected3 : ARRAY [0..1] OF REAL := [2.3,4.5];
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -317,8 +335,10 @@ VAR
 	expected1 : INT := 123;
 	expected2 : INT := 234;
 	expected3 : INT := 345;
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -372,8 +392,10 @@ VAR
 	expected1 : STRING := 'test1';
 	expected2 : STRING := 'test2';
 	expected3 : STRING := 'test3';
-	store : List;
 	enumerator : I_ForwardEnumerator;
+END_VAR
+VAR_INST
+	store : List;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -415,5 +437,53 @@ AssertEquals(
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
+    <LineIds Name="ListForwardEnumerator_TestSuite">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckIsValidAtStart">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckMoveNextReturnsFalseAtTheEnd">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckMoveNextReturnsFalseWhenEmpty">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckMoveNextReturnsTrueMultipleItems">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckMoveNextReturnsTrueSingleItem">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckReset">
+      <LineId Id="3" Count="21" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckTryGet">
+      <LineId Id="3" Count="19" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckTryGetTo">
+      <LineId Id="3" Count="19" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckWorksWithArrays">
+      <LineId Id="3" Count="34" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckWorksWithIntegers">
+      <LineId Id="3" Count="34" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="ListForwardEnumerator_TestSuite.CheckWorksWithStrings">
+      <LineId Id="3" Count="34" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
