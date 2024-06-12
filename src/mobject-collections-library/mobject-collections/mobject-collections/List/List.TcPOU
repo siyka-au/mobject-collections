@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.6">
   <POU Name="List" Id="{9220d5a8-4969-08a4-1724-7633ca12bf29}" SpecialFunc="None">
     <Declaration><![CDATA[{attribute 'linkalways'} 
 {attribute 'no_explicit_call' := 'This FB is a CLASS and must be accessed using methods or properties'}
@@ -30,12 +30,13 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[node := CreateNewNode(Item);
-AddNodeLast(node);
-EmitChangedEvent();]]></ST>
+IF AddNodeLast(node) THEN
+	EmitChangedEvent();
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddNodeAt" Id="{434fcbfc-1b21-406c-bc70-53644c6aca95}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE AddNodeAt
+      <Declaration><![CDATA[METHOD PRIVATE AddNodeAt : BOOL
 VAR_INPUT
 	Index : DINT;
 	Node : I_ListNode;
@@ -46,7 +47,9 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Index = itemCount THEN
-	AddNodeLast(Node);
+	IF AddNodeLast(Node) THEN
+		AddNodeAt := TRUE;
+	END_IF
 	RETURN;
 END_IF
 
@@ -54,33 +57,45 @@ IF Index > itemCount - 1 THEN
 	RETURN;
 END_IF
 
-IF Count + 1 > arrayCapacity THEN
-	Resize();
+IF itemCount + 1 > arrayCapacity THEN
+	IF NOT Grow() THEN
+		RETURN;
+	END_IF
 END_IF
 
-//Move all excisting nodes up
-FOR i := itemCount - 1 TO Index BY -1 DO
-	pArrayOfListNodes[i + 1] := pArrayOfListNodes[i];
-	pArrayOfListNodes[i] := 0;
-END_FOR
-
-pArrayOfListNodes[Index] := Node;
-itemCount := itemCount + 1;]]></ST>
+IF IsBufferPointerValid THEN
+	//Move all excisting nodes up
+	FOR i := itemCount - 1 TO Index BY -1 DO
+		pArrayOfListNodes[i + 1] := pArrayOfListNodes[i];
+		pArrayOfListNodes[i] := 0;
+	END_FOR
+	
+	pArrayOfListNodes[Index] := Node;
+	itemCount := itemCount + 1;
+	
+	AddNodeAt := TRUE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddNodeLast" Id="{0fd32a56-42dd-46f2-9f6e-72084c72716b}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE AddNodeLast
+      <Declaration><![CDATA[METHOD PRIVATE AddNodeLast : BOOL
 VAR_INPUT
 	Node : I_ListNode;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = arrayCapacity THEN
-    Resize();
+        <ST><![CDATA[IF itemCount = arrayCapacity THEN
+    IF NOT Grow() THEN
+		RETURN;
+	END_IF
 END_IF
 
-pArrayOfListNodes[itemCount] := Node;
-itemCount := itemCount + 1;]]></ST>
+IF IsBufferPointerValid THEN
+	pArrayOfListNodes[itemCount] := Node;
+	itemCount := itemCount + 1;
+	
+	AddNodeLast := TRUE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="Capacity" Id="{627ddc89-13f9-42d2-99f0-470fa6c85ab9}">
@@ -125,9 +140,7 @@ Contains := GetIndexOf(Item) > -1;]]></ST>
     <Property Name="Count" Id="{18af26e5-6368-08f4-3269-b1e13029edb8}">
       <Declaration><![CDATA[PROPERTY PUBLIC Count : DINT]]></Declaration>
       <Get Name="Get" Id="{84d29658-765a-06de-2dbc-7bd104ca837e}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+        <Declaration><![CDATA[]]></Declaration>
         <Implementation>
           <ST><![CDATA[Count := itemCount;]]></ST>
         </Implementation>
@@ -224,6 +237,49 @@ FOR i := 0 TO itemCount - 1 DO
 END_FOR ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="Grow" Id="{aa524b81-d1fc-4fc5-8e9b-5c5798157c90}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE Grow : BOOL
+VAR
+	node : I_ListNode;
+END_VAR
+VAR CONSTANT
+	INITIAL_CAPACITY : DINT := 4;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF arrayCapacity = 0 THEN
+	arrayCapacity := INITIAL_CAPACITY;
+ELSE
+	arrayCapacity := arrayCapacity * 2;
+END_IF
+
+IF buffer.bAvailable THEN
+	IF NOT buffer.Resize(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bPreserve := TRUE, bReset := FALSE) THEN
+		RETURN;
+	END_IF
+ELSE
+	IF NOT buffer.CreateBuffer(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bReset := TRUE) THEN
+		RETURN;
+	END_IF
+END_IF
+
+IF buffer.bAvailable THEN
+	pArrayOfListNodes := buffer.pBuffer;
+	
+	IF IsBufferPointerValid THEN
+		Grow := TRUE;
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="IsBufferPointerValid" Id="{050ffdb2-bc7f-4534-a751-06f0e5aa65c5}" FolderPath="Private\">
+      <Declaration><![CDATA[PROPERTY PRIVATE IsBufferPointerValid : BOOL]]></Declaration>
+      <Get Name="Get" Id="{343b014d-2e57-4916-aada-74911f7348c5}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsBufferPointerValid := pArrayOfListNodes <> 0;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="IsEmpty" Id="{4ad381b9-db6e-4adb-9e4a-12902170c312}">
       <Declaration><![CDATA[PROPERTY IsEmpty : BOOL]]></Declaration>
       <Get Name="Get" Id="{a9e217e4-6ded-4f1a-9d8d-aadaebe0bcf4}">
@@ -242,7 +298,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IsNotValidIndex := not IsValidIndex(Index);]]></ST>
+        <ST><![CDATA[IsNotValidIndex := NOT IsValidIndex(Index);]]></ST>
       </Implementation>
     </Method>
     <Method Name="IsValidIndex" Id="{509f1c3a-d218-4854-ab0e-56d9f99586ec}" FolderPath="Private\">
@@ -274,7 +330,9 @@ END_VAR
 	RETURN;
 END_IF
 
-Item := pArrayOfListNodes[Index];]]></ST>
+IF IsBufferPointerValid THEN
+	Item := pArrayOfListNodes[Index];
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="OffEvent" Id="{6d43365d-a3f5-40bf-b0a0-cad17bdad2f3}">
@@ -322,30 +380,6 @@ END_FOR
 itemCount := 0;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="Resize" Id="{aa524b81-d1fc-4fc5-8e9b-5c5798157c90}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE Resize
-VAR
-	node : I_ListNode;
-END_VAR
-VAR CONSTANT
-	INITIAL_CAPACITY : DINT := 4;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF arrayCapacity = 0 THEN
-	arrayCapacity := INITIAL_CAPACITY;
-ELSE
-	arrayCapacity := arrayCapacity * 2;
-END_IF
-
-IF buffer.bAvailable THEN
-	buffer.Resize(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bPreserve := TRUE, bReset := FALSE);
-ELSE
-	buffer.CreateBuffer(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bReset := TRUE);
-END_IF
-
-pArrayOfListNodes := buffer.pBuffer;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="TrimExcess" Id="{6de9ea7b-ef6a-4934-859f-de170f7ffff9}">
       <Declaration><![CDATA[METHOD PUBLIC TrimExcess
 VAR
@@ -361,7 +395,11 @@ IF arrayCapacity = itemCount THEN
 END_IF
 
 arrayCapacity := itemCount;
-buffer.Resize(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bPreserve := TRUE, bReset := FALSE);]]></ST>
+IF buffer.Resize(nSize := DINT_TO_UDINT(arrayCapacity) * SIZEOF(node), bPreserve := TRUE, bReset := FALSE) THEN
+	pArrayOfListNodes := buffer.pBuffer;
+ELSE
+	pArrayOfListNodes := 0;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryCopyTo" Id="{08647dfb-c5bf-4481-b560-e5f349a8a87f}">
@@ -466,9 +504,10 @@ END_VAR]]></Declaration>
 END_IF
 
 node := CreateNewNode(Item);
-AddNodeAt(Index, node);
-EmitChangedEvent();
-TryInsert := TRUE;]]></ST>
+IF AddNodeAt(Index, node) THEN
+	EmitChangedEvent();
+	TryInsert := TRUE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryRemoveAt" Id="{5fddda2d-2bc3-08a7-1fc5-3303b29b003f}">
@@ -485,17 +524,19 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-node := Item(Index);
-node.Dispose();
-
-FOR i := Index + 1 TO itemCount - 1 DO
-	pArrayOfListNodes[i - 1] := pArrayOfListNodes[i];
-	pArrayOfListNodes[i] := 0;
-END_FOR
-
-itemCount := itemCount - 1;
-EmitChangedEvent();
-TryRemoveAt := TRUE;]]></ST>
+IF IsBufferPointerValid THEN
+	node := Item(Index);
+	node.Dispose();
+	
+	FOR i := Index + 1 TO itemCount - 1 DO
+		pArrayOfListNodes[i - 1] := pArrayOfListNodes[i];
+		pArrayOfListNodes[i] := 0;
+	END_FOR
+	
+	itemCount := itemCount - 1;
+	EmitChangedEvent();
+	TryRemoveAt := TRUE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryRemoveItem" Id="{405b8587-bb35-4a7f-9adc-3766cc05ff19}">
@@ -517,5 +558,148 @@ END_IF
 TryRemoveItem := TryRemoveAt(index);]]></ST>
       </Implementation>
     </Method>
+    <LineIds Name="List">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.AddItem">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="List.AddNodeAt">
+      <LineId Id="33" Count="17" />
+      <LineId Id="54" Count="8" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="52" Count="0" />
+    </LineIds>
+    <LineIds Name="List.AddNodeLast">
+      <LineId Id="3" Count="1" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="2" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Capacity.Get">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Clear">
+      <LineId Id="3" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Contains">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Count.Get">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="List.CreateNewNode">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.EmitChangedEvent">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.EmitDisposedEvent">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.FB_exit">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.GetEnumerator">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.GetIndexOf">
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Grow">
+      <LineId Id="3" Count="7" />
+      <LineId Id="17" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="List.IsBufferPointerValid.Get">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="List.IsEmpty.Get">
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="List.IsNotValidIndex">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.IsValidIndex">
+      <LineId Id="3" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.Item">
+      <LineId Id="3" Count="2" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="List.OffEvent">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.OnceEvent">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.OnEvent">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.RemoveAllNodes">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TrimExcess">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="12" Count="3" />
+    </LineIds>
+    <LineIds Name="List.TryCopyTo">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TryCopyToLocation">
+      <LineId Id="3" Count="20" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TryGetByIndex">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TryGetToByIndex">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TryInsert">
+      <LineId Id="3" Count="6" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="List.TryRemoveAt">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="9" Count="9" />
+      <LineId Id="7" Count="1" />
+    </LineIds>
+    <LineIds Name="List.TryRemoveItem">
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>
